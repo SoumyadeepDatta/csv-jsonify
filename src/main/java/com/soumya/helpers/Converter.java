@@ -37,27 +37,6 @@ public class Converter {
         }
     }
 
-    public static String multiValueHandler(String s) {
-        String res = "";
-
-        String[] srr = s.split(",");
-
-        if (srr.length == 1) {
-            return numericValueHandler(s);
-        }
-
-        srr[0] = srr[0].substring(1);
-        srr[srr.length - 1] = srr[srr.length - 1].substring(0, srr[srr.length - 1].length() - 1);
-
-        for (int i = 0; i < srr.length; i++) {
-            res += numericValueHandler(srr[i]);
-            res += (i == srr.length - 1) ? "" : ",";
-        }
-
-        return "[" + res + "]";
-
-    }
-
     public static String toJSONString(List<String> data)
 
     {
@@ -78,7 +57,7 @@ public class Converter {
                 if (arr[j].length() == 0) {
                     json += "null";
                 } else {
-                    json += multiValueHandler(arr[j]);
+                    json += numericValueHandler(arr[j]);
                 }
 
                 json += (j == arr.length - 1) ? "" : ",";

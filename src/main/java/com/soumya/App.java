@@ -9,7 +9,7 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.soumya.helpers.CSVValidator;
+import com.soumya.helpers.Validator;
 import com.soumya.helpers.Converter;
 
 /**
@@ -58,7 +58,7 @@ public class App {
 
         if (data.size() > 1) {
 
-            CSVValidator.fileIntegrityChecker(data);
+            Validator.fileIntegrityChecker(data);
 
             writeToFile(Converter.toJSONString(data));
 

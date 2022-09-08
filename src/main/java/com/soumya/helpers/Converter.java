@@ -1,26 +1,9 @@
 package com.soumya.helpers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Converter {
-
-    /**
-     * ", "+ // match a comma
-     * "(?= "+ // start positive look ahead
-     * " (?: "+ // start non-capturing group 1
-     * " %s* "+ // match 'otherThanQuote' zero or more times
-     * " %s "+ // match 'quotedString'
-     * " )* "+ // end group 1 and repeat it zero or more times
-     * " %s* "+ // match 'otherThanQuote'
-     * " $ "+ // match the end of the string
-     * ") ", // stop positive look ahead
-     * 
-     * @param s
-     * @return
-     */
-    public static String[] stringToCSVArray(String s) {
-        return s.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
-    }
 
     public static String numericValueHandler(String s) {
         try {
@@ -37,37 +20,53 @@ public class Converter {
         }
     }
 
-    public static String toJSONString(List<String> data)
+    public static String toJSONString(List<String> data, boolean beautify) throws CSVFormatViolationException
 
     {
         String json = "";
 
-        String[] attr = CSV.getAttributes(data);
+        String[] attr = CSV.getHeader(data);
+        int attrLen = CSV.getHeaderLength(data);
 
         data.remove(0);
 
         for (int i = 0; i < data.size(); i++) {
             int k = 0;
-            String[] arr = stringToCSVArray(data.get(i));
+            ArrayList<String> arr = CSV.parseCSVString(data.get(i));
+
+            if (arr.size() != attrLen) {
+                throw new CSVFormatViolationException();
+            }
+
+            if(beautify){
+                json+= "\n\t";
+            }
             json += "{";
-            for (int j = 0; j < arr.length; j++) {
 
-                json += "\"" + attr[k] + "\"" + ":";
+            for (int j = 0; j < arr.size(); j++) {
 
-                if (arr[j].length() == 0) {
-                    json += "null";
-                } else {
-                    json += numericValueHandler(arr[j]);
+                if (arr.get(j).length() != 0) {
+                    if(beautify){
+                        json+= "\n\t\t";
+                    }
+                    json += "\"" + attr[k] + "\"" + ":";
+                    if(beautify){
+                        json+=" ";
+                    }
+                    json += numericValueHandler(arr.get(j));
+                    json += (j == arr.size() - 1) ? "" : ",";
                 }
 
-                json += (j == arr.length - 1) ? "" : ",";
                 k++;
+            }
+            if(beautify){
+                json+= "\n\t";
             }
             json += "}";
             json += (i == data.size() - 1) ? "" : ",";
         }
 
-        return "[" + json + "]";
+        return "[\n" + json + "\n]";
     }
 
 }

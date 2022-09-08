@@ -9,13 +9,13 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.soumya.helpers.Validator;
+import com.soumya.helpers.CSVFormatViolationException;
 import com.soumya.helpers.Converter;
 
 /**
  * @author Soumyadeep Datta
  * @version 1.0.0
- * covid.csv
+ *          covid.csv
  */
 public class App {
 
@@ -56,21 +56,28 @@ public class App {
 
         List<String> data = readFile(br.readLine());
 
+        System.out.print(" Press Y to beautify. Press any other key to ignore : ");
+        String yn = br.readLine();
+        boolean beautify=(yn.equalsIgnoreCase("Y"))?true:false;
+
         if (data.size() > 1) {
 
-            Validator.fileIntegrityChecker(data);
+            try {
+                writeToFile(Converter.toJSONString(data,beautify));
+                System.out.println(" Write successful !!!" + " (" + (System.currentTimeMillis() - startTime) + " ms)");
+            } catch (CSVFormatViolationException e) {
+                e.printStackTrace();
+                System.err
+                        .println(" Write unsuccessful !!!" + " (" + (System.currentTimeMillis() - startTime) + " ms)");
+            }
 
-            writeToFile(Converter.toJSONString(data));
-
-            long endTime = System.currentTimeMillis();
-
-            System.out.println(" Write successful !!!" + " (" + (endTime - startTime) + " ms)" );
+            finally {
+                System.out.println(" -----------------------------------------------------------------------");
+                System.out.println("|\t\t      THANK YOU FOR USING CONVERTER\t\t\t|");
+                System.out.println(" -----------------------------------------------------------------------");
+            }
 
         }
-
-        System.out.println(" -----------------------------------------------------------------------");
-        System.out.println("|\t\t      THANK YOU FOR USING CONVERTER\t\t\t|");
-        System.out.println(" -----------------------------------------------------------------------");
 
     }
 }

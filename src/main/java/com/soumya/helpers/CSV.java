@@ -7,11 +7,11 @@ public abstract class CSV {
 
     public static ArrayList<String> parseCSVString(String s) {
         String value = "";
-        int quotsDelim = 0;
+        int delim = 0;
         ArrayList<String> csvString = new ArrayList<>();
         for (char ch : s.toCharArray()) {
             if (ch == ',') {
-                if (quotsDelim % 2 != 0) {
+                if (delim % 2 != 0) {
                     value += ch;
                 } else {
                     csvString.add(value);
@@ -19,7 +19,7 @@ public abstract class CSV {
                 }
             } else {
                 if (ch == '"') {
-                    quotsDelim++;
+                    delim++;
                 }
                 value += ch;
             }
